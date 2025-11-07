@@ -211,6 +211,23 @@ onMounted(async () => {
         attribution: "© OpenStreetMap contributors"
     }).addTo(map.value);
 
+    // 加载板块数据
+    fetch('/config/PB2002_boundaries.json')
+        .then(response => response.json())
+        .then(data => {
+            L.geoJSON(data, {
+                style: function (feature) {
+                    return {
+                        color: "red",
+                        weight: 2,
+                        fillOpacity: 0
+                    };
+                },
+                onEachFeature: function (feature, layer) {
+                }
+            }).addTo(map.value);
+        });
+
     // 初始化数据
     data.value = await getData(filter);
 
