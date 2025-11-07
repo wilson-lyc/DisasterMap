@@ -19,6 +19,6 @@ app.use((req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`服务器已启动：http://0.0.0.0:${PORT}`);
+app.listen(PORT, () => {
+  console.log(`Started, running on http://localhost:${PORT}`);
 });
