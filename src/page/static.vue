@@ -93,6 +93,9 @@ const legendConfig = [
 
 // 加载数据
 async function getData(filter) {
+    if (filter.disasterTypes.length > 5) {
+        ElMessage.info('Loading may take longer when more than 5 disaster types are selected. Please wait patiently or reduce the number of types.');
+    }
     try {
         const res = await getDisasterData({
             view: filter.view,
@@ -166,6 +169,9 @@ async function onLegendClick(item) {
         }
     } else {
         filter.disasterTypes.push(item.type);
+    }
+    if (filter.disasterTypes.length > 5) {
+        ElMessage.info('Loading may take longer when more than 5 disaster types are selected. Please wait patiently or reduce the number of types.');
     }
     loading.value = true;
     data.value = await getData(filter);
