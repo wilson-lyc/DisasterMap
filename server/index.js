@@ -8,6 +8,6 @@ app.use(express.json());
 
 app.use('/api', dataRouter);
 
-app.listen(PORT, () => {
-  console.log(`服务器已启动：http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`服务器已启动：http://0.0.0.0:${PORT}`);
 });
