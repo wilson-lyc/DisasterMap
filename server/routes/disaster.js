@@ -5,20 +5,14 @@ import path from 'path';
 const router = Router();
 
 const leagleDisasterTypes = [
+    'Epidemic',
     'Drought',
     'Flood',
     'Extreme temperature',
     'Volcanic activity',
     'Storm',
     'Wildfire',
-    'Earthquake',
-    'Epidemic',
-    'Mass movement (wet)',
-    'Infestation',
-    'Mass movement (dry)',
-    'Impact',
-    'Animal incident',
-    'Glacial lake outburst flood'
+    'Earthquake'
 ]
 
 router.post('/getDisasterData', (req, res) => {
@@ -40,7 +34,7 @@ router.post('/getDisasterData', (req, res) => {
         const yearRange = req.body.yearRange || [2000, 2025];
 
         // 检查请求参数
-        if (view !== 'economic' && view !== 'population') {
+        if (view !== 'economic' && view !== 'population' && view !== 'none') {
             return res.status(200).json({
                 code: 400,
                 msg: 'Invalid request parameters',
@@ -72,24 +66,24 @@ router.post('/getDisasterData', (req, res) => {
 
         // 筛选 disasterTypes
         if (Array.isArray(disasterTypes) && disasterTypes.length > 0) {
-            jsonData = jsonData.filter(item => disasterTypes.includes(item.disaster_type));
+            jsonData = jsonData.filter(item => disasterTypes.includes(item.d));
         }
 
         // 筛选 yearRange
         if (Array.isArray(yearRange) && yearRange.length === 2) {
             const [minYear, maxYear] = yearRange;
-            jsonData = jsonData.filter(item => item.start_year >= minYear && item.start_year <= maxYear);
+            jsonData = jsonData.filter(item => item.t >= minYear && item.t <= maxYear);
         }
 
         // 筛选 view
         if (view === 'economic') {
             jsonData = jsonData
-                .filter(item => item.economic_radius && item.economic_radius !== 0)
-                .map(item => ({ ...item, radius: item.economic_radius }));
-        } else {
+                .filter(item => item.e != null && item.e !== 0)
+                .map(item => ({ ...item, r: item.el }));
+        } else if (view === 'population') {
             jsonData = jsonData
-                .filter(item => item.population_radius && item.population_radius !== 0)
-                .map(item => ({ ...item, radius: item.population_radius }));
+                .filter(item => item.p != null && item.p !== 0)
+                .map(item => ({ ...item, r: item.pl }));
         }
         res.json({
             code: 200,

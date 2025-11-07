@@ -6,6 +6,7 @@
         <el-form :model="filter" label-width="auto" style="max-width: 700px;">
             <el-form-item label="View">
                 <el-radio-group v-model="filter.view">
+                    <el-radio value="none">None</el-radio>
                     <el-radio value="economic">economic</el-radio>
                     <el-radio value="population">population</el-radio>
                 </el-radio-group>
@@ -20,13 +21,6 @@
                     <el-checkbox value="Wildfire" name="disasterTypes">Wildfire</el-checkbox>
                     <el-checkbox value="Earthquake" name="disasterTypes">Earthquake</el-checkbox>
                     <el-checkbox value="Epidemic" name="disasterTypes">Epidemic</el-checkbox>
-                    <el-checkbox value="Mass movement (wet)" name="disasterTypes">Mass movement (wet)</el-checkbox>
-                    <el-checkbox value="Infestation" name="disasterTypes">Infestation</el-checkbox>
-                    <el-checkbox value="Mass movement (dry)" name="disasterTypes">Mass movement (dry)</el-checkbox>
-                    <el-checkbox value="Impact" name="disasterTypes">Impact</el-checkbox>
-                    <el-checkbox value="Animal incident" name="disasterTypes">Animal incident</el-checkbox>
-                    <el-checkbox value="Glacial lake outburst flood" name="disasterTypes">Glacial lake outburst
-                        flood</el-checkbox>
                 </el-checkbox-group>
             </el-form-item>
             <el-form-item label="Year Range">
@@ -64,40 +58,28 @@ const loading = ref(true)
 const filter = reactive({
     view: 'economic',
     disasterTypes: [
+        'Epidemic',
         'Drought',
         'Flood',
         'Extreme temperature',
         'Volcanic activity',
         'Storm',
         'Wildfire',
-        'Earthquake',
-        'Epidemic',
-        'Mass movement (wet)',
-        'Infestation',
-        'Mass movement (dry)',
-        'Impact',
-        'Animal incident',
-        'Glacial lake outburst flood'
+        'Earthquake'
     ],
     yearRange: [2000, 2025],
     cluster: false
 });
 // 图例配置
 const legendConfig = [
-    { type: 'Drought', color: '#FF8C00' },
-    { type: 'Flood', color: '#1E90FF' },
-    { type: 'Extreme temperature', color: '#B22222' },
-    { type: 'Volcanic activity', color: '#8B0000' },
-    { type: 'Storm', color: '#4169E1' },
-    { type: 'Wildfire', color: '#FF4500' },
-    { type: 'Earthquake', color: '#8B4513' },
-    { type: 'Epidemic', color: '#228B22' },
-    { type: 'Mass movement (wet)', color: '#2F4F4F' },
-    { type: 'Infestation', color: '#556B2F' },
-    { type: 'Mass movement (dry)', color: '#A0522D' },
-    { type: 'Impact', color: '#696969' },
-    { type: 'Animal incident', color: '#483D8B' },
-    { type: 'Glacial lake outburst flood', color: '#4682B4' }
+    { type: 'Drought', color: '#FBC02D' },
+    { type: 'Flood', color: '#1976D2' },
+    { type: 'Extreme temperature', color: '#E53935' },
+    { type: 'Volcanic activity', color: '#8E24AA' },
+    { type: 'Storm', color: '#00ACC1' },
+    { type: 'Wildfire', color: '#FF7043' },
+    { type: 'Earthquake', color: '#6D4C41' },
+    { type: 'Epidemic', color: '#43A047' }
 ]
 
 // 加载数据
@@ -114,15 +96,15 @@ async function getData(filter) {
     }
 }
 
-// 加载标记
+// 绘制标记点
 function loadMarkers(input) {
-    // 删除circles
+    // 删除现有circles
     map.value.eachLayer(function (layer) {
         if (layer instanceof L.Circle) {
             map.value.removeLayer(layer);
         }
     });
-    // 删除clusters
+    // 删除现有clusters
     if (markers.value) {
         map.value.removeLayer(markers.value);
         markers.value = null;
@@ -134,30 +116,49 @@ function loadMarkers(input) {
     // 创建新坐标
     input.forEach(item => {
         // 创建circle
-        const circle = L.circle([item.latitude, item.longitude], {
-            radius: 200 * item.radius,
-            color: item.color,
-            fillColor: item.color,
-            fillOpacity: 0.3
-        })
+        let circle = null
+        if (filter.view === 'none') {
+            circle = L.circle([item.y, item.x], {
+                radius: 1000,
+                color: item.c,
+                fillColor: item.c,
+                fillOpacity: 0.3
+            })
+        }
+        else {
+            circle = L.circle([item.y, item.x], {
+                radius: 70000 * item.r,
+                color: item.c,
+                fillColor: item.c,
+                fillOpacity: 0.2
+            })
+        }
         // 添加弹窗
         if (filter.view === 'economic') {
-            const formattedDamage = (item.total_damage_adjusted_usd != null && !isNaN(item.total_damage_adjusted_usd))
-                ? Number(item.total_damage_adjusted_usd).toLocaleString('en-US', { style: 'currency', currency: 'USD' })
-                : 'N/A';
-            circle.bindPopup(`<b>${item.disaster_type}</b><br>
-            Year: ${item.start_year}<br>
-            Economic Damage: ${formattedDamage}`);
+            const formattedDamage = (item.e != null && !isNaN(item.e))
+                ? Number(item.e).toLocaleString('en-US', { style: 'currency', currency: 'USD' })
+                : 'No record';
+            circle.bindPopup(`<b>${item.d}</b><br>
+            Year: ${item.t}<br>
+            Economic Damage (USD'000): ${formattedDamage}`);
         } else if (filter.view === 'population') {
-            const formattedAffected = (item.total_affected != null && !isNaN(item.total_affected))
-                ? Number(item.total_affected).toLocaleString('en-US')
-                : 'N/A';
-            circle.bindPopup(`<b>${item.disaster_type}</b><br>
-            Year: ${item.start_year}<br>
+            const formattedAffected = (item.p != null && !isNaN(item.p))
+                ? Number(item.p).toLocaleString('en-US')
+                : 'No record';
+            circle.bindPopup(`<b>${item.d}</b><br>
+            Year: ${item.t}<br>
             Population Affected: ${formattedAffected}`);
         } else {
-            circle.bindPopup(`<b>${item.disaster_type}</b><br>
-            Year: ${item.start_year}`);
+            const formattedDamage = (item.e != null && !isNaN(item.e))
+                ? Number(item.e).toLocaleString('en-US', { style: 'currency', currency: 'USD' })
+                : 'No record';
+            const formattedAffected = (item.p != null && !isNaN(item.p))
+                ? Number(item.p).toLocaleString('en-US')
+                : 'No record';
+            circle.bindPopup(`<b>${item.d}</b><br>
+            Year: ${item.t}<br>
+            Population Affected: ${formattedAffected}<br>
+            Economic Damage (USD'000): ${formattedDamage}`);
         }
         // 加入map
         if (filter.cluster) {
@@ -166,9 +167,8 @@ function loadMarkers(input) {
             circle.addTo(map.value); // 非聚合模式
         }
     });
-    
     if (filter.cluster) {
-        map.value.addLayer(markers.value); // 添加聚合器到地图
+        map.value.addLayer(markers.value);
     }
 }
 
