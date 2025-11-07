@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { ElMessage } from 'element-plus'
 
 const service = axios.create({
   baseURL: '/api',
@@ -13,8 +14,18 @@ service.interceptors.request.use(
 )
 
 service.interceptors.response.use(
-  response => response.data, // 直接返回 data
+  response => {
+    const res = response.data
+    if (res.code === 200) {
+      return res
+    } else {
+      console.error('API Error:', res)
+      ElMessage.error(res.code+" "+res.msg || 'Error')
+      return Promise.reject(new Error(res.msg || 'Error'))
+    }
+  },
   error => {
+    ElMessage.error('Request failed')
     return Promise.reject(error)
   }
 )

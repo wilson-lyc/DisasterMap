@@ -15,7 +15,7 @@ const router = createRouter({
     {
       path: '/panel_b',
       name: 'Map',
-      component: () => import('@/page/static_old.vue')
+      component: () => import('@/page/static.vue')
     },
     // {
     //   path: '/panel_a_new',

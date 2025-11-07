@@ -1,5 +1,5 @@
 import express from 'express';
-import dataRouter from './routes/data.js';
+import dataRouter from './routes/disaster.js';
 
 const app = express();
 const PORT = 3000;

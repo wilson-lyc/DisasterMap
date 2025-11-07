@@ -46,7 +46,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import Legend from "@/components/Legend.vue";
 import { ElMessage, ElNotification } from 'element-plus'
-import { getData as apiGetData } from "@/api/data";
+import { getDisasterData } from "@/api/disaster";
 
 const map = ref(null);
 const data = ref([]);
@@ -94,18 +94,13 @@ const legendConfig = [
 // 加载数据
 async function getData(filter) {
     try {
-        const response = await apiGetData({
+        const res = await getDisasterData({
             view: filter.view,
             disasterTypes: filter.disasterTypes,
             yearRange: filter.yearRange
         });
-        return response;
+        return res.data;
     } catch (error) {
-        ElNotification.error({
-            title: 'Error',
-            message: 'Failed to fetch data: ' + error.message,
-            duration: 5000
-        });
         return [];
     }
 }
