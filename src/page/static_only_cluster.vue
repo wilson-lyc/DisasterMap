@@ -1,6 +1,5 @@
 <template>
-    <div v-loading.fullscreen.lock="loading"
-        element-loading-text="Loading...Please wait patiently or reduce the number of disaster types"></div>
+    <div v-loading.fullscreen.lock="loading" element-loading-text="Loading...Please wait patiently or reduce the number of disaster types"></div>
     <div id="map"></div>
     <el-drawer v-model="drawer" title="Setting" direction="btt" @close="drawerClose" size="60%">
         <el-form :model="filter" label-width="auto" style="max-width: 700px;">
@@ -31,9 +30,6 @@
             </el-form-item>
             <el-form-item label="Year Range">
                 <el-slider v-model="filter.yearRange" range :min="2000" :max="2025" />
-            </el-form-item>
-            <el-form-item label="Cluster Mode">
-                <el-switch v-model="filter.cluster" />
             </el-form-item>
         </el-form>
     </el-drawer>
@@ -79,8 +75,7 @@ const filter = reactive({
         'Animal incident',
         'Glacial lake outburst flood'
     ],
-    yearRange: [2000, 2025],
-    cluster: false
+    yearRange: [2000, 2025]
 });
 // 图例配置
 const legendConfig = [
@@ -116,30 +111,21 @@ async function getData(filter) {
 
 // 加载标记
 function loadMarkers(input) {
-    // 删除circles
-    map.value.eachLayer(function (layer) {
-        if (layer instanceof L.Circle) {
-            map.value.removeLayer(layer);
-        }
-    });
-    // 删除clusters
+    // 删除现有标记
     if (markers.value) {
         map.value.removeLayer(markers.value);
         markers.value = null;
     }
-    // 判断是否聚合
-    if (filter.cluster) {
-        markers.value = L.markerClusterGroup(); // 创建新的标记聚合器
-    }
-    // 创建新坐标
+    // 创建新的标记聚合器
+    markers.value = L.markerClusterGroup();
+    // 添加标记
     input.forEach(item => {
-        // 创建circle
         const circle = L.circle([item.latitude, item.longitude], {
-            radius: 200 * item.radius,
+            radius: 500,
             color: item.color,
             fillColor: item.color,
             fillOpacity: 0.3
-        })
+        });
         // 添加弹窗
         if (filter.view === 'economic') {
             const formattedDamage = (item.total_damage_adjusted_usd != null && !isNaN(item.total_damage_adjusted_usd))
@@ -155,21 +141,13 @@ function loadMarkers(input) {
             circle.bindPopup(`<b>${item.disaster_type}</b><br>
             Year: ${item.start_year}<br>
             Population Affected: ${formattedAffected}`);
-        } else {
+        } else
             circle.bindPopup(`<b>${item.disaster_type}</b><br>
             Year: ${item.start_year}`);
-        }
-        // 加入map
-        if (filter.cluster) {
-            markers.value.addLayer(circle); // 聚合模式
-        } else {
-            circle.addTo(map.value); // 非聚合模式
-        }
+        // 添加至聚合器
+        markers.value.addLayer(circle);
     });
-    
-    if (filter.cluster) {
-        map.value.addLayer(markers.value); // 添加聚合器到地图
-    }
+    map.value.addLayer(markers.value);
 }
 
 // 关闭设置面板
