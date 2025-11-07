@@ -47,7 +47,7 @@ import "leaflet/dist/leaflet.css";
 import 'leaflet.markercluster';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
-import Legend from "@/components/Legend.vue";
+import Legend from "@/components/CircleLegend.vue";
 import { ElMessage, ElNotification } from 'element-plus'
 import { getDisasterData } from "@/api/disaster";
 

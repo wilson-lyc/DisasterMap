@@ -39,7 +39,8 @@
     </el-drawer>
 
     <div class="legend-box">
-        <Legend v-for="item in legendConfig" :color="item.color" :text="item.type"
+        <LineLegend color="#ff0000" text="Plate Boundaries" v-if="filter.plate"/>
+        <CircleLegend v-for="item in legendConfig" :color="item.color" :text="item.type"
             :active="filter.disasterTypes.includes(item.type)" @click="onLegendClick(item)" />
     </div>
 </template>
@@ -51,7 +52,8 @@ import "leaflet/dist/leaflet.css";
 import 'leaflet.markercluster';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
-import Legend from "@/components/Legend.vue";
+import CircleLegend from "@/components/CircleLegend.vue";
+import LineLegend from "@/components/LineLegend.vue";
 import { ElMessage } from 'element-plus'
 import { getDisasterData } from "@/api/disaster";
 

@@ -44,7 +44,7 @@
 import { onMounted, ref, reactive } from "vue";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import Legend from "@/components/Legend.vue";
+import Legend from "@/components/CircleLegend.vue";
 import { ElMessage, ElNotification } from 'element-plus'
 import { getDisasterData } from "@/api/disaster";
 
