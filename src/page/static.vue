@@ -127,18 +127,18 @@ function loadMarkers(input) {
             const formattedDamage = (item.total_damage_adjusted_usd != null && !isNaN(item.total_damage_adjusted_usd))
                 ? Number(item.total_damage_adjusted_usd).toLocaleString('en-US', { style: 'currency', currency: 'USD' })
                 : 'N/A';
-            circle.bindPopup(`<b>${item.disasterTypes}</b><br>
+            circle.bindPopup(`<b>${item.disaster_type}</b><br>
             Year: ${item.start_year}<br>
             Economic Damage: ${formattedDamage}`);
         } else if (filter.view === 'population') {
             const formattedAffected = (item.total_affected != null && !isNaN(item.total_affected))
                 ? Number(item.total_affected).toLocaleString('en-US')
                 : 'N/A';
-            circle.bindPopup(`<b>${item.disasterTypes}</b><br>
+            circle.bindPopup(`<b>${item.disaster_type}</b><br>
             Year: ${item.start_year}<br>
             Population Affected: ${formattedAffected}`);
         } else
-            circle.bindPopup(`<b>${item.disasterTypes}</b><br>
+            circle.bindPopup(`<b>${item.disaster_type}</b><br>
             Year: ${item.start_year}`);
     });
 }

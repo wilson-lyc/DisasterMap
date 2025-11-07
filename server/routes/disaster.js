@@ -22,7 +22,7 @@ const leagleDisasterTypes = [
 ]
 
 router.post('/getDisasterData', (req, res) => {
-    const filePath = path.join(process.cwd(), 'public', 'config', 'data.json');
+    const filePath = path.join(process.cwd(), 'server', 'data', 'data.json');
     fs.readFile(filePath, 'utf-8', (err, data) => {
         if (err) {
             return res.status(200).json({
