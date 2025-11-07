@@ -56,7 +56,7 @@ const drawer = ref(false)
 const loading = ref(true)
 // 筛选条件
 const filter = reactive({
-    view: 'economic',
+    view: 'none',
     disasterTypes: [
         'Epidemic',
         'Drought',
@@ -127,7 +127,8 @@ function loadMarkers(input) {
         }
         else {
             circle = L.circle([item.y, item.x], {
-                radius: 70000 * item.r,
+                // radius: 50000 + 20000 * item.r * item.r,
+                radius: 90000 * item.r,
                 color: item.c,
                 fillColor: item.c,
                 fillOpacity: 0.2
