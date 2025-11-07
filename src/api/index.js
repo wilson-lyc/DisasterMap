@@ -3,7 +3,7 @@ import { ElMessage } from 'element-plus'
 
 const service = axios.create({
   baseURL: '/api',
-  timeout: 5000
+  timeout: 20000 // 20秒
 })
 
 service.interceptors.request.use(
@@ -25,7 +25,11 @@ service.interceptors.response.use(
     }
   },
   error => {
-    ElMessage.error('Request failed')
+    if (error.code === 'ECONNABORTED' && error.message && error.message.includes('timeout')) {
+      ElMessage.error('timeout error, please try again later')
+    } else {
+      ElMessage.error('Request failed')
+    }
     return Promise.reject(error)
   }
 )
