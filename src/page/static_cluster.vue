@@ -1,8 +1,11 @@
 <template>
+
     <div v-loading.fullscreen.lock="loading"
         element-loading-text="Loading...Please wait patiently or reduce the number of disaster types"></div>
     <div id="map"></div>
-    <el-drawer v-model="drawer" title="Setting" direction="btt" @close="drawerClose" size="60%">
+
+    <el-drawer v-model="drawer" title="Setting" direction="btt" size="60%" @open="onSettingOpen"
+        @close="onSettingClose">
         <el-form :model="filter" label-width="auto" style="max-width: 700px;">
             <el-form-item label="View">
                 <el-radio-group v-model="filter.view">
@@ -29,6 +32,9 @@
             <el-form-item label="Cluster Mode">
                 <el-switch v-model="filter.cluster" />
             </el-form-item>
+            <el-form-item label="Plate Boundaries">
+                <el-switch v-model="filter.plate"/>
+            </el-form-item>
         </el-form>
     </el-drawer>
 
@@ -46,15 +52,31 @@ import 'leaflet.markercluster';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import Legend from "@/components/Legend.vue";
-import { ElMessage, ElNotification } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { getDisasterData } from "@/api/disaster";
 
-const map = ref(null);
-let markers = ref(null);
-const data = ref([]);
-const drawer = ref(false)
-const loading = ref(true)
-// 筛选条件
+// 变量
+const map = ref(null);          // 地图实例
+let circlesGroup = ref(null);   // 圆圈组
+let plateLayer = ref(null);     // 大陆板块图层
+const data = ref([]);           // 数据
+const drawer = ref(false)       // 设置面板状态
+const loading = ref(true)       // 加载状态
+let oldFilter = null;           // 旧过滤器
+
+// 图例配置
+const legendConfig = [
+    { type: 'Drought', color: '#FBC02D' },
+    { type: 'Flood', color: '#1976D2' },
+    { type: 'Extreme temperature', color: '#E53935' },
+    { type: 'Volcanic activity', color: '#8E24AA' },
+    { type: 'Storm', color: '#00ACC1' },
+    { type: 'Wildfire', color: '#FF7043' },
+    { type: 'Earthquake', color: '#6D4C41' },
+    { type: 'Epidemic', color: '#43A047' }
+]
+
+// 数据过滤器
 const filter = reactive({
     view: 'none',
     disasterTypes: [
@@ -68,21 +90,11 @@ const filter = reactive({
         'Earthquake'
     ],
     yearRange: [2000, 2025],
-    cluster: false
+    cluster: false,
+    plate: false
 });
-// 图例配置
-const legendConfig = [
-    { type: 'Drought', color: '#FBC02D' },
-    { type: 'Flood', color: '#1976D2' },
-    { type: 'Extreme temperature', color: '#E53935' },
-    { type: 'Volcanic activity', color: '#8E24AA' },
-    { type: 'Storm', color: '#00ACC1' },
-    { type: 'Wildfire', color: '#FF7043' },
-    { type: 'Earthquake', color: '#6D4C41' },
-    { type: 'Epidemic', color: '#43A047' }
-]
 
-// 加载数据
+// 获取数据
 async function getData(filter) {
     try {
         const res = await getDisasterData({
@@ -96,90 +108,125 @@ async function getData(filter) {
     }
 }
 
-// 绘制标记点
-function loadMarkers(input) {
-    // 删除现有circles
-    map.value.eachLayer(function (layer) {
-        if (layer instanceof L.Circle) {
-            map.value.removeLayer(layer);
-        }
-    });
-    // 删除现有clusters
-    if (markers.value) {
-        map.value.removeLayer(markers.value);
-        markers.value = null;
-    }
-    // 判断是否聚合
-    if (filter.cluster) {
-        markers.value = L.markerClusterGroup(); // 创建新的标记聚合器
-    }
-    // 创建新坐标
-    input.forEach(item => {
-        // 创建circle
-        let circle = null
-        if (filter.view === 'none') {
-            circle = L.circle([item.y, item.x], {
-                radius: 1000,
-                color: item.c,
-                fillColor: item.c,
-                fillOpacity: 0.3
-            })
-        }
-        else {
-            circle = L.circle([item.y, item.x], {
-                // radius: 50000 + 20000 * item.r * item.r,
-                radius: 90000 * item.r,
-                color: item.c,
-                fillColor: item.c,
-                fillOpacity: 0.2
-            })
-        }
-        // 添加弹窗
-        if (filter.view === 'economic') {
-            const formattedDamage = (item.e != null && !isNaN(item.e))
-                ? Number(item.e).toLocaleString('en-US', { style: 'currency', currency: 'USD' })
-                : 'No record';
-            circle.bindPopup(`<b>${item.d}</b><br>
-            Year: ${item.t}<br>
-            Economic Damage (USD'000): ${formattedDamage}`);
-        } else if (filter.view === 'population') {
-            const formattedAffected = (item.p != null && !isNaN(item.p))
-                ? Number(item.p).toLocaleString('en-US')
-                : 'No record';
-            circle.bindPopup(`<b>${item.d}</b><br>
-            Year: ${item.t}<br>
-            Population Affected: ${formattedAffected}`);
-        } else {
-            const formattedDamage = (item.e != null && !isNaN(item.e))
-                ? Number(item.e).toLocaleString('en-US', { style: 'currency', currency: 'USD' })
-                : 'No record';
-            const formattedAffected = (item.p != null && !isNaN(item.p))
-                ? Number(item.p).toLocaleString('en-US')
-                : 'No record';
-            circle.bindPopup(`<b>${item.d}</b><br>
-            Year: ${item.t}<br>
-            Population Affected: ${formattedAffected}<br>
-            Economic Damage (USD'000): ${formattedDamage}`);
-        }
-        // 加入map
-        if (filter.cluster) {
-            markers.value.addLayer(circle); // 聚合模式
-        } else {
-            circle.addTo(map.value); // 非聚合模式
-        }
-    });
-    if (filter.cluster) {
-        map.value.addLayer(markers.value);
+// 格式化经济损失
+function formattedDamage(value) {
+    if (value != null && !isNaN(value)) {
+        return Number(value).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+    } else {
+        return 'No record';
     }
 }
 
+// 格式化受影响人口
+function formattedAffected(value) {
+    if (value != null && !isNaN(value)) {
+        return Number(value).toLocaleString('en-US');
+    } else {
+        return 'No record';
+    }
+}
+
+// 创建地图
+function createMap() {
+    if (map.value)
+        return
+    map.value = L.map("map").setView([0, 0], 2);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "© OpenStreetMap"
+    }).addTo(map.value);
+}
+
+// 创建大陆板块图层
+async function createPlateLayer() {
+    if (plateLayer.value)
+        return;
+    // 加载板块数据
+    const response = await fetch('/config/PB2002_plates.json');
+    const data = await response.json();
+    plateLayer.value = L.geoJSON(data, {
+        style: () => ({
+            color: "red",
+            weight: 2,
+            fillOpacity: 0
+        }),
+        onEachFeature: (feature, layer) => {
+        },
+    });
+    // 添加到地图
+    if (map.value) {
+        plateLayer.value.addTo(map.value);
+    }
+}
+
+// 移除大陆板块图层
+function removePlateLayer() {
+    if (plateLayer.value) {
+        map.value.removeLayer(plateLayer.value);
+        plateLayer.value = null;
+    }
+}
+
+// 绘制标记
+function drawCircles(data) {
+    // 清除现有标记
+    if (circlesGroup.value) {
+        map.value.removeLayer(circlesGroup.value);
+        circlesGroup.value = null;
+    }
+    // 创建新的标记组
+    if (filter.cluster) {
+        circlesGroup.value = L.markerClusterGroup(); // 聚合模式
+    } else {
+        circlesGroup.value = L.layerGroup(); // 非聚合模式
+    }
+    // 创建标记
+    data.forEach(item => {
+        // 创建圆圈
+        let circle = L.circle([item.y, item.x], {
+            radius: 1000,
+            color: item.c,
+            fillColor: item.c,
+            fillOpacity: 0.3
+        })
+        // 设置半径
+        if (filter.view === 'none') {
+            circle.setRadius(1000);
+        } else {
+            circle.setRadius(90000 * item.r);
+        }
+        // 添加弹窗
+        circle.bindPopup(`<b>${item.d}</b><br>
+            Year: ${item.t}<br>
+            Population Affected: ${formattedAffected(item.e)}<br>
+            Economic Damage (USD'000): ${formattedDamage(item.p)}`);
+        // 加入标记组
+        circlesGroup.value.addLayer(circle);
+    });
+    map.value.addLayer(circlesGroup.value);
+}
+
+function onSettingOpen() {
+    oldFilter = JSON.parse(JSON.stringify(filter));
+}
+
 // 关闭设置面板
-async function drawerClose() {
+async function onSettingClose() {
     loading.value = true;
-    // 获取数据
+    // 判断过滤条件是否变化
+    if (JSON.stringify(oldFilter) === JSON.stringify(filter)) {
+        loading.value = false;
+        return;
+    }
+    // 重新绘制板块
+    if (filter.plate) {
+        await createPlateLayer();
+    } else {
+        removePlateLayer();
+    }
+    // 获取新数据
     data.value = await getData(filter);
-    // 加载标记
-    loadMarkers(data.value);
+    // 重新绘制标记
+    drawCircles(data.value);
     loading.value = false;
 }
 
@@ -199,42 +246,28 @@ async function onLegendClick(item) {
     }
     loading.value = true;
     data.value = await getData(filter);
-    loadMarkers(data.value);
+    drawCircles(data.value);
     loading.value = false;
 }
 
 onMounted(async () => {
     loading.value = true;
+
     // 初始化地图
-    map.value = L.map("map").setView([0, 0], 2);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "© OpenStreetMap contributors"
-    }).addTo(map.value);
+    createMap();
 
-    // 加载板块数据
-    fetch('/config/PB2002_boundaries.json')
-        .then(response => response.json())
-        .then(data => {
-            L.geoJSON(data, {
-                style: function (feature) {
-                    return {
-                        color: "red",
-                        weight: 2,
-                        fillOpacity: 0
-                    };
-                },
-                onEachFeature: function (feature, layer) {
-                }
-            }).addTo(map.value);
-        });
+    // 初始化板块图层
+    if (filter.plate) {
+        await createPlateLayer();
+    }
 
-    // 初始化数据
+    // 获取数据
     data.value = await getData(filter);
 
-    // 初始化标记
-    loadMarkers(data.value);
+    // 绘制标记
+    drawCircles(data.value);
 
-    // 初始化toolbar
+    // 右上角 - 设置
     const SettingsControl = L.Control.extend({
         options: {
             position: 'topright'
@@ -257,6 +290,8 @@ onMounted(async () => {
         }
     });
     map.value.addControl(new SettingsControl());
+
+    // 结束加载
     loading.value = false;
 });
 </script>
