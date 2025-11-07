@@ -1,5 +1,5 @@
 <template>
-    <div v-loading.fullscreen.lock="loading" element-loading-text="Loading..."></div>
+    <div v-loading.fullscreen.lock="loading" element-loading-text="Loading...Please wait patiently or reduce the number of disaster types"></div>
     <div id="map"></div>
     <el-drawer v-model="drawer" title="Setting" direction="btt" @close="drawerClose" size="60%">
         <el-form :model="filter" label-width="auto" style="max-width: 700px;">
@@ -93,9 +93,6 @@ const legendConfig = [
 
 // 加载数据
 async function getData(filter) {
-    if (filter.disasterTypes.length > 5) {
-        ElMessage.info('Loading may take longer when more than 5 disaster types are selected. Please wait patiently or reduce the number of types.');
-    }
     try {
         const res = await getDisasterData({
             view: filter.view,
@@ -169,9 +166,6 @@ async function onLegendClick(item) {
         }
     } else {
         filter.disasterTypes.push(item.type);
-    }
-    if (filter.disasterTypes.length > 5) {
-        ElMessage.info('Loading may take longer when more than 5 disaster types are selected. Please wait patiently or reduce the number of types.');
     }
     loading.value = true;
     data.value = await getData(filter);
