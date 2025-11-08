@@ -4,6 +4,7 @@
         element-loading-text="Loading...Please wait patiently or reduce the number of disaster types"></div>
     <div id="map"></div>
 
+    <!-- Setting Panel -->
     <el-drawer v-model="drawer" title="Setting" direction="btt" size="60%" @open="onSettingOpen"
         @close="onSettingClose">
         <el-form :model="filter" label-width="auto" style="max-width: 700px;">
@@ -33,15 +34,26 @@
                 <el-switch v-model="filter.cluster" />
             </el-form-item>
             <el-form-item label="Plate Boundaries">
-                <el-switch v-model="filter.plate"/>
+                <el-switch v-model="filter.plate" />
             </el-form-item>
         </el-form>
     </el-drawer>
 
-    <div class="legend-box">
-        <LineLegend color="#ff0000" text="Plate Boundaries" v-if="filter.plate"/>
-        <CircleLegend v-for="item in legendConfig" :color="item.color" :text="item.type"
-            :active="filter.disasterTypes.includes(item.type)" @click="onLegendClick(item)" />
+    <!-- Bottom Left -->
+    <div class="bl-container">
+        <div class="box time-box" title="setting" @click="drawer = true">
+            <div v-if="filter.yearRange[0] === filter.yearRange[1]">
+                Time: {{ filter.yearRange[0] }}
+            </div>
+            <div v-else>
+                Time: {{ filter.yearRange[0] }} - {{ filter.yearRange[1] }}
+            </div>
+        </div>
+        <div class="box">
+            <LineLegend color="#ff0000" text="Plate Boundaries" v-if="filter.plate" />
+            <CircleLegend v-for="item in legendConfig" :color="item.color" :text="item.type"
+                :active="filter.disasterTypes.includes(item.type)" @click="onLegendClick(item)" />
+        </div>
     </div>
 </template>
 
@@ -134,7 +146,7 @@ function createMap() {
         return
     map.value = L.map("map").setView([0, 0], 2);
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "© OpenStreetMap"
+        attribution: "Map data from OpenStreetMap | Disaster data from EM-DAT"
     }).addTo(map.value);
 }
 
@@ -304,11 +316,17 @@ onMounted(async () => {
     height: 100%;
 }
 
-.legend-box {
+.bl-container {
     z-index: 1000;
     position: fixed;
     left: 10px;
     bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.bl-container .box {
     background: rgba(255, 255, 255, 0.7);
     border-radius: 4px;
     border: 2px solid rgba(0, 0, 0, 0.2);
@@ -316,5 +334,9 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     gap: 3px;
+    font-size: 14px;
+}
+.time-box{
+    cursor: pointer;
 }
 </style>

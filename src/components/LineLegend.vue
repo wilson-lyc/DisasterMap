@@ -29,12 +29,5 @@ defineProps({
     height: 3px;
     border-radius: 2px;
     margin-right: 6px;
-    transition: background 0.2s;
-    background: #ccc;
-}
-
-.legend-label {
-    font-size: 14px;
-    color: #000;
 }
 </style>

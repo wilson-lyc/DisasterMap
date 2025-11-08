@@ -1,5 +1,5 @@
 <template>
-    <div class="legend-item" @click="onClick">
+    <div class="legend-item" @click="onClick" :title="active?'cancel':'show'">
         <span class="legend-dot" :style="{
             background: active ? color : '#ccc'
         }"></span>
@@ -37,13 +37,6 @@ function onClick() {
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    margin-right: 3px;
-    transition: background 0.2s;
-    /* border: 2px solid #eee; */
-}
-
-.legend-label {
-    font-size: 14px;
-    color: #333;
+    margin-right: 6px;
 }
 </style>
