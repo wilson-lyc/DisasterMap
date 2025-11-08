@@ -15,18 +15,8 @@ const router = createRouter({
     {
       path: '/panel_b',
       name: 'Static',
-      component: () => import('@/page/static_cluster.vue')
+      component: () => import('@/page/static.vue')
     },
-    // {
-    //   path: '/panel_b_cluster',
-    //   name: 'StaticNew',
-    //   component: () => import('@/page/static_only_cluster.vue')
-    // },
-    // {
-    //   path: '/panel_b_new',
-    //   name: 'StaticNew',
-    //   component: () => import('@/page/static_cluster.vue')
-    // },
     {
       path: '/:pathMatch(.*)*',
       redirect:'/panel_a'
