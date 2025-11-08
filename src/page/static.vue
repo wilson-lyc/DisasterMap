@@ -116,23 +116,18 @@ async function getData(filter) {
             disasterTypes: filter.disasterTypes,
             yearRange: filter.yearRange
         });
+        if (res.data.length === 0) {
+            ElMessage.warning('No data. Please adjust your settings.');
+        }
+
         return res.data;
     } catch (error) {
         return [];
     }
 }
 
-// 格式化经济损失
-function formattedDamage(value) {
-    if (value != null && !isNaN(value)) {
-        return Number(value).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-    } else {
-        return 'No record';
-    }
-}
-
-// 格式化受影响人口
-function formattedAffected(value) {
+// 格式化数字
+function formattedNumber(value) {
     if (value != null && !isNaN(value)) {
         return Number(value).toLocaleString('en-US');
     } else {
@@ -211,14 +206,15 @@ function drawCircles(data) {
         // 添加弹窗
         circle.bindPopup(`<b>${item.d}</b><br>
             Year: ${item.t}<br>
-            Population Affected: ${formattedAffected(item.e)}<br>
-            Economic Damage (USD'000): ${formattedDamage(item.p)}`);
+            Population Affected: ${formattedNumber(item.e)}<br>
+            Economic Damage (USD'000): ${formattedNumber(item.p)}`);
         // 加入标记组
         circlesGroup.value.addLayer(circle);
     });
     map.value.addLayer(circlesGroup.value);
 }
 
+// 打开设置面板
 function onSettingOpen() {
     oldFilter = JSON.parse(JSON.stringify(filter));
 }
@@ -336,7 +332,8 @@ onMounted(async () => {
     gap: 3px;
     font-size: 14px;
 }
-.time-box{
+
+.time-box {
     cursor: pointer;
 }
 </style>
