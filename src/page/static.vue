@@ -135,6 +135,11 @@ function formattedNumber(value) {
     }
 }
 
+function getColor(type) {
+    const item = legendConfig.find(i => i.type === type);
+    return item ? item.color : '#000000';
+}
+
 // 创建地图
 function createMap() {
     if (map.value)
@@ -193,8 +198,8 @@ function drawCircles(data) {
         // 创建圆圈
         let circle = L.circle([item.y, item.x], {
             radius: 1000,
-            color: item.c,
-            fillColor: item.c,
+            color: getColor(item.d),
+            fillColor: getColor(item.d),
             fillOpacity: 0.3
         })
         // 设置半径
