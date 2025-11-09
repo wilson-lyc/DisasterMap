@@ -197,10 +197,8 @@ function drawCircles(data) {
     data.forEach(item => {
         // 创建圆圈
         let circle = L.circle([item.y, item.x], {
-            radius: 1000,
             color: getColor(item.d),
             fillColor: getColor(item.d),
-            fillOpacity: 0.3
         })
         // 设置半径
         if (filter.view === 'none') {
@@ -210,9 +208,10 @@ function drawCircles(data) {
         }
         // 添加弹窗
         circle.bindPopup(`<b>${item.d}</b><br>
+            ID: ${item.id}<br>
             Year: ${item.t}<br>
-            Population Affected: ${formattedNumber(item.e)}<br>
-            Economic Damage (USD'000): ${formattedNumber(item.p)}`);
+            Population Affected: ${formattedNumber(item.p)}<br>
+            Economic Damage (USD'000): ${formattedNumber(item.e)}`);
         // 加入标记组
         circlesGroup.value.addLayer(circle);
     });
