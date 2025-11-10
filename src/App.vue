@@ -1,7 +1,7 @@
 <template>
   <el-menu :default-active="activeMenu" router mode="horizontal">
-    <el-menu-item index="/panel_a">Panel A</el-menu-item>
-    <el-menu-item index="/panel_b">Panel B</el-menu-item>
+    <el-menu-item index="/panel_a">Temporal Map</el-menu-item>
+    <el-menu-item index="/panel_b">Interactive Map</el-menu-item>
   </el-menu>
   <div id="main">
     <RouterView />
