@@ -55,6 +55,29 @@
                 :active="filter.disasterTypes.includes(item.type)" @click="onLegendClick(item)" />
         </div>
     </div>
+
+    <!-- Detail -->
+    <div>
+        <el-dialog v-model="detailVisible" title="Disaster Details" width="500" class="detail-dialog">
+            <template v-if="detailData && Object.keys(detailData).length">
+                <el-table :data="Object.entries(detailData)" border height="300" style="width:100%;min-width:200px;">
+                    <el-table-column label="Key" prop="0">
+                        <template #default="scope">
+                            {{ keyMap[scope.row[0]] || scope.row[0] }}
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="Value" prop="1">
+                        <template #default="scope">
+                            {{ (scope.row[1] === null || scope.row[1] === undefined || scope.row[1] === '') ? 'No record' : scope.row[1] }}
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </template>
+            <template v-else>
+                <span>No detail data.</span>
+            </template>
+        </el-dialog>
+    </div>
 </template>
 
 <script setup>
@@ -67,7 +90,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import CircleLegend from "@/components/CircleLegend.vue";
 import LineLegend from "@/components/LineLegend.vue";
 import { ElMessage } from 'element-plus'
-import { getDisasterData } from "@/api/disaster";
+import { getDisasterData, getDisasterDetail } from "@/api/disaster";
 
 // 变量
 const map = ref(null);          // 地图实例
@@ -77,6 +100,8 @@ const data = ref([]);           // 数据
 const drawer = ref(false)       // 设置面板状态
 const loading = ref(true)       // 加载状态
 let oldFilter = null;           // 旧过滤器
+const detailVisible = ref(false);   // 详情对话框可见性
+let detailData = ref(null);         // 详情数据
 
 // 图例配置
 const legendConfig = [
@@ -107,6 +132,25 @@ const filter = reactive({
     cluster: false,
     plate: false
 });
+
+// 字段映射字典
+const keyMap = {
+    id: "ID",
+    d: "Disaster Type",
+    y: "Latitude",
+    x: "Longitude",
+    r: "Region",
+    c: "Country",
+    l: "Location",
+    sy: "Start Year",
+    sm: "Start Month",
+    sd: "Start Day",
+    ey: "End Year",
+    em: "End Month",
+    ed: "End Day",
+    p: "Population Affected",
+    e: "Economic Demage (USD'000)"
+};
 
 // 获取数据
 async function getData(filter) {
@@ -211,7 +255,8 @@ function drawCircles(data) {
             ID: ${item.id}<br>
             Year: ${item.t}<br>
             Population Affected: ${formattedNumber(item.p)}<br>
-            Economic Damage (USD'000): ${formattedNumber(item.e)}`);
+            Economic Damage (USD'000): ${formattedNumber(item.e)}<br>
+            <a href="javascript:void(0)" onclick="window.__showDisasterDetail && window.__showDisasterDetail('${item.id}')">More</a>`);
         // 加入标记组
         circlesGroup.value.addLayer(circle);
     });
@@ -264,6 +309,20 @@ async function onLegendClick(item) {
     loading.value = false;
 }
 
+// detail dialog
+async function showDetail(id) {
+    // 获取数据
+    detailData.value = null;
+    try {
+        const res = await getDisasterDetail(id);
+        detailData.value = res.data;
+    } catch (error) {
+        return;
+    }
+    detailVisible.value = true;
+}
+
+
 onMounted(async () => {
     loading.value = true;
 
@@ -305,6 +364,8 @@ onMounted(async () => {
     });
     map.value.addControl(new SettingsControl());
 
+    window.__showDisasterDetail = showDetail;
+
     // 结束加载
     loading.value = false;
 });
@@ -339,5 +400,25 @@ onMounted(async () => {
 
 .time-box {
     cursor: pointer;
+}
+
+.detail-dialog {
+    /* 默认宽度 */
+    max-width: 500px;
+    width: 100%;
+}
+
+@media (max-width: 600px) {
+    .detail-dialog {
+        max-width: 98vw !important;
+        width: 98vw !important;
+        left: 1vw !important;
+    }
+    .el-table {
+        font-size: 12px;
+    }
+    .el-dialog {
+        padding: 0 !important;
+    }
 }
 </style>

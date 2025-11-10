@@ -92,4 +92,48 @@ router.post('/getDisasterData', (req, res) => {
         });
     });
 });
+
+router.get('/getDisasterDetail', (req, res) => {
+    const disasterId = req.query.id;
+    if (!disasterId) {
+        return res.status(200).json({
+            code: 400,
+            msg: 'Invalid request parameters',
+        });
+    }
+    const filePath = path.join(process.cwd(), 'server', 'data', 'detail_data.json');
+    fs.readFile(filePath, 'utf-8', (err, data) => {
+        if (err) {
+            return res.status(200).json({
+                code: 500,
+                msg: 'database exception',
+                err: 'file read error',
+            });
+        }
+        let jsonData;
+        try {
+            jsonData = JSON.parse(data);
+        } catch (e) {
+            return res.status(200).json({
+                code: 500,
+                msg: 'database exception',
+                err: 'JSON parse error',
+            });
+        }
+        // 查找第一个 id 匹配的数据
+        const detail = jsonData.find(item => String(item.id) === String(disasterId));
+        if (!detail) {
+            return res.status(200).json({
+                code: 404,
+                msg: 'not found',
+            });
+        }
+        res.json({
+            code: 200,
+            msg: 'success',
+            data: detail,
+        });
+    });
+});
+
 export default router;
