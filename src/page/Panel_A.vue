@@ -5,7 +5,6 @@
             <p>for a better experience</p>
         </div>
         <div v-else class="content">
-            <!-- <iframe v-if="!showRotateTip" ref="myIframe" src="/html/time.html" class="iframe-content"></iframe> -->
             <Time />
         </div>
     </div>
@@ -14,24 +13,29 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import Time from '@/components/Time.vue';
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 const showRotateTip = ref(false)
+let alertFlag = ref(false)
 
 function checkOrientation() {
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    if (isMobile) {
-        ElMessage.warning('We recommend using a desktop or tablet to visit map.dextea.cn for a better visual experience')
+    if (isMobile && !alertFlag.value) {
+        ElMessageBox.alert('For the best visual experience, we kindly recommend visiting our website on a computer or tablet.', 'Friendly Reminder', {
+            confirmButtonText: 'OK',
+        })
+        // ElMessage.warning('We recommend using a desktop or tablet to visit map.dextea.cn for a better visual experience')
+        alertFlag.value = true;
     }
     if (isMobile && window.innerWidth < window.innerHeight) {
         showRotateTip.value = true;
     } else {
         showRotateTip.value = false;
     }
-    
 }
 
 onMounted(() => {
+    alertFlag.value = false;
     window.addEventListener('resize', checkOrientation);
     checkOrientation();
 })
