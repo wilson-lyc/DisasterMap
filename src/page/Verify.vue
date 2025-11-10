@@ -8,6 +8,7 @@
 <script setup>
 import { onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 const route = useRoute()
 const router = useRouter()
@@ -31,6 +32,9 @@ onMounted(() => {
             },
             'timeout-callback': function () {
                 console.log('Challenge timed out');
+                ElMessageBox.alert("If you haven't been able to complete verification for an extended period, please try accessing our website using your phone's default browser, such as Safari.", 'Reminder', {
+                    confirmButtonText: 'OK',
+                })
             }
         })
     }
