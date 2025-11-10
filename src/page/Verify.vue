@@ -11,11 +11,12 @@ import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
 const router = useRouter()
+const SITE_KEY = import.meta.env.VITE_SITE_KEY
 
 onMounted(() => {
     if (window.turnstile) {
         window.turnstile.render('#turnstile-container', {
-            sitekey: '0x4AAAAAACACpmvfvjn4D4am',
+            sitekey: SITE_KEY,
             language: 'en',
             callback: (token) => {
                 sessionStorage.setItem('verify_token', token)

@@ -8,10 +8,10 @@
   },
   "scripts": {
     "start": "npm run build && node server/index.js",
-    "dev:client": "vite",
+    "dev:client": "vite --mode development",
     "dev:server": "nodemon server/index.js",
     "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
-    "build": "vite build",
+    "build": "vite build --mode production",
     "preview": "vite preview"
   },
   "dependencies": {
