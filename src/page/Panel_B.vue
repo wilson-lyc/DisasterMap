@@ -58,7 +58,7 @@
 
     <!-- Detail -->
     <div>
-        <el-dialog v-model="detailVisible" title="Disaster Details" width="500" class="detail-dialog">
+        <el-dialog v-model="detailVisible" title="Disaster Details" class="detail-dialog">
             <template v-if="detailData && Object.keys(detailData).length">
                 <el-table :data="Object.entries(detailData)" border height="300" style="width:100%;min-width:200px;">
                     <el-table-column label="Key" prop="0">
