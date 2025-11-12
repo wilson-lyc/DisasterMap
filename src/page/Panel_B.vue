@@ -60,7 +60,7 @@
     <div>
         <el-dialog v-model="detailVisible" title="Disaster Details" width="80%">
             <template v-if="detailData && Object.keys(detailData).length">
-                <el-table :data="Object.entries(detailData)" border height="300" style="width:100%;">
+                <el-table :data="Object.entries(detailData)" border height="60vh" style="width:100%;">
                     <el-table-column label="Key" prop="0">
                         <template #default="scope">
                             {{ keyMap[scope.row[0]] || scope.row[0] }}
