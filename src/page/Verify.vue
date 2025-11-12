@@ -4,19 +4,28 @@
         <div id="turnstile-container"></div>
         <div class="wechat-warning">This site cannot be accessed inside WeChat.</div>
         <div class="wechat">Please use your device's default browser to open it.</div>
+        {{ isWeChat }}
     </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const route = useRoute()
 const router = useRouter()
 const SITE_KEY = import.meta.env.VITE_SITE_KEY
+const isWeChat = ref(false);
+
+const isWeChatBrowser = () => {
+    const ua = navigator.userAgent.toLowerCase();
+    return ua.indexOf('micromessenger') !== -1;
+}
 
 onMounted(() => {
+    isWeChat.value = isWeChatBrowser();
+
     if (window.turnstile) {
         window.turnstile.render('#turnstile-container', {
             sitekey: SITE_KEY,
@@ -56,5 +65,4 @@ onMounted(() => {
 .tips {
     font-size: 16px;
 }
-
 </style>
