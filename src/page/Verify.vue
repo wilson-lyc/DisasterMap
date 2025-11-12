@@ -2,6 +2,8 @@
     <div class="verity-wrapper">
         <div class="tips">Please verify you are human</div>
         <div id="turnstile-container"></div>
+        <div class="wechat-warning">This site cannot be accessed inside WeChat.</div>
+        <div class="wechat">Please use your device's default browser to open it.</div>
     </div>
 </template>
 
@@ -45,10 +47,14 @@ onMounted(() => {
 .verity-wrapper {
     margin: 24px auto 0 auto;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
 }
 
 .tips {
     font-size: 16px;
-    margin-bottom: 12px;
 }
+
 </style>
