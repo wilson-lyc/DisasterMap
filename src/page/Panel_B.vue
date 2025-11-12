@@ -58,7 +58,7 @@
 
     <!-- Detail -->
     <div>
-        <el-dialog v-model="detailVisible" title="Disaster Details" class="detail-dialog">
+        <el-dialog v-model="detailVisible" title="Disaster Details" widtn="80%">
             <template v-if="detailData && Object.keys(detailData).length">
                 <el-table :data="Object.entries(detailData)" border height="300" style="width:100%;min-width:200px;">
                     <el-table-column label="Key" prop="0">
@@ -400,12 +400,6 @@ onMounted(async () => {
 
 .time-box {
     cursor: pointer;
-}
-
-.detail-dialog {
-    /* 默认宽度 */
-    max-width: 500px;
-    width: 100%;
 }
 
 @media (max-width: 600px) {
