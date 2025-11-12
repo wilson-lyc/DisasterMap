@@ -6,6 +6,9 @@
   <div id="main">
     <RouterView />
   </div>
+  <div class="icp">
+    <a href="https://beian.miit.gov.cn/" target="_blank">粤ICP备2023033182号-2</a>
+  </div>
 </template>
 
 <script setup>
@@ -41,5 +44,17 @@ body,
 #main {
   flex: 1;
   overflow: auto;
+}
+
+.icp {
+  z-index: 1000;
+  position: fixed;
+  right: 10px;
+  top: 20px;
+  font-size: 14px;
+}
+.icp a {
+  color: gray;
+  text-decoration: none;
 }
 </style>
