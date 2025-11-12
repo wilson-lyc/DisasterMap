@@ -4,7 +4,6 @@
         <div id="turnstile-container"></div>
         <div class="wechat-warning">This site cannot be accessed inside WeChat.</div>
         <div class="wechat">Please use your device's default browser to open it.</div>
-        {{ isWeChat }}
     </div>
 </template>
 
@@ -25,6 +24,13 @@ const isWeChatBrowser = () => {
 
 onMounted(() => {
     isWeChat.value = isWeChatBrowser();
+
+    if (isWeChat.value) {
+        ElMessageBox.alert("This site cannot be accessed inside WeChat. Please use your device's default browser to open it.", 'WeChat Warning', {
+            confirmButtonText: 'OK',
+        });
+        return;
+    }
 
     if (window.turnstile) {
         window.turnstile.render('#turnstile-container', {
