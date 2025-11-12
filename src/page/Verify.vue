@@ -30,6 +30,7 @@ onMounted(() => {
         window.turnstile.render('#turnstile-container', {
             sitekey: SITE_KEY,
             language: 'en',
+            theme: 'light',
             callback: (token) => {
                 sessionStorage.setItem('verify_token', token)
                 const redirectPath = route.query.redirect || '/'
