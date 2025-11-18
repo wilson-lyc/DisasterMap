@@ -4,15 +4,12 @@
     <el-menu-item index="/panel_b">Interactive Map</el-menu-item>
     <el-menu-item>
       <template #default>
-        <a href="https://beian.miit.gov.cn/" target="_blank">粤ICP备2023033182号-2</a>
+        <a href="https://beian.miit.gov.cn/" target="_blank">粤ICP备2023033182号</a>
       </template>
     </el-menu-item>
   </el-menu>
   <div id="main">
     <RouterView />
-  </div>
-  <div class="icp">
-
   </div>
 </template>
 
