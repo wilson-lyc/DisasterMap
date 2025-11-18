@@ -30,16 +30,16 @@ const router = createRouter({
 })
 
 // 全局前置守卫
-// router.beforeEach((to, from, next) => {
-//   const token = sessionStorage.getItem('verify_token')
-//   if (!token && to.path !== '/verify') {
-//     next({
-//       path: '/verify',
-//       query: { redirect: to.fullPath }
-//     })
-//   } else {
-//     next()
-//   }
-// })
+router.beforeEach((to, from, next) => {
+  const token = sessionStorage.getItem('verify_token')
+  if (!token && to.path !== '/verify') {
+    next({
+      path: '/verify',
+      query: { redirect: to.fullPath }
+    })
+  } else {
+    next()
+  }
+})
 
 export default router

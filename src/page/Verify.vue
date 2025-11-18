@@ -2,8 +2,9 @@
     <div class="verity-wrapper">
         <div class="tips">Please verify you are human</div>
         <div id="turnstile-container"></div>
-        <div class="wechat-warning">This site cannot be accessed inside WeChat.</div>
-        <div class="wechat">Please use your device's default browser to open it.</div>
+        <!-- <div class="wechat-warning">This site cannot be accessed inside WeChat.</div> -->
+        <!-- <div class="wechat">Please use your device's default browser to open it.</div> -->
+         <div>If you cannot pass the verification, please try accessing the website using your device's default browser.</div>
     </div>
 </template>
 
@@ -25,17 +26,11 @@ const isWeChatBrowser = () => {
 onMounted(() => {
     isWeChat.value = isWeChatBrowser();
 
-    if (isWeChat.value) {
-        ElMessageBox.alert("This site cannot be accessed inside WeChat. Please use your device's default browser to open it.", 'WeChat Warning', {
-            confirmButtonText: 'OK',
-        });
-        return;
-    }
-
     if (window.turnstile) {
         window.turnstile.render('#turnstile-container', {
             sitekey: SITE_KEY,
             language: 'en',
+            theme: 'light',
             callback: (token) => {
                 sessionStorage.setItem('verify_token', token)
                 const redirectPath = route.query.redirect || '/'
@@ -54,6 +49,13 @@ onMounted(() => {
                 })
             }
         })
+    }
+
+    // Handle WeChat browser case
+    if (isWeChat.value) {
+        sessionStorage.setItem('verify_token', "wechat_browser")
+        const redirectPath = route.query.redirect || '/'
+        router.push(redirectPath)
     }
 })
 </script>
