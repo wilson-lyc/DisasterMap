@@ -1,7 +1,7 @@
 import request from './index'
 
-export function getDisasterData(filter = {}) {
-    return request.post('/getDisasterData', filter)
+export function getMapData(filter = {}) {
+    return request.post('/getMapData', filter)
 }
 
 export function getDisasterDetail(id){

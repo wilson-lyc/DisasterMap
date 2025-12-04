@@ -15,8 +15,9 @@ const leagleDisasterTypes = [
     'Earthquake'
 ]
 
-router.post('/getDisasterData', (req, res) => {
-    const filePath = path.join(process.cwd(), 'server', 'data', 'data.json');
+router.post('/getMapData', (req, res) => {
+    // Read data from data4map.json
+    const filePath = path.join(process.cwd(), 'server', 'data', 'data4map.json');
     fs.readFile(filePath, 'utf-8', (err, data) => {
         if (err) {
             return res.status(200).json({
@@ -25,26 +26,26 @@ router.post('/getDisasterData', (req, res) => {
             });
         }
 
-        // 获取灾难数据
+        // Load and parse JSON data
         let jsonData = JSON.parse(data);
 
-        // 获取请求参数
-        const view = req.body.view || 'economic';
+        // Parse request parameters
+        const view = req.body.view || 'none';
         const disasterTypes = req.body.disasterTypes || leagleDisasterTypes;
         const yearRange = req.body.yearRange || [2000, 2025];
 
-        // 检查请求参数
-        if (view !== 'economic' && view !== 'population' && view !== 'none') {
+        // Check validity of request parameters
+        if (!['economic', 'population', 'none'].includes(view)) {
             return res.status(200).json({
-                code: 400,
-                msg: 'Invalid request parameters',
+            code: 400,
+            msg: 'Invalid request parameters',
             });
         }
 
-        if (!Array.isArray(disasterTypes) || disasterTypes.some(type => !leagleDisasterTypes.includes(type))) {
+        if (!Array.isArray(disasterTypes) || disasterTypes.length === 0 || disasterTypes.some(type => !leagleDisasterTypes.includes(type))) {
             return res.status(200).json({
-                code: 400,
-                msg: 'Invalid request parameters',
+            code: 400,
+            msg: 'Invalid request parameters',
             });
         }
 
@@ -64,18 +65,16 @@ router.post('/getDisasterData', (req, res) => {
             });
         }
 
-        // 筛选 disasterTypes
+        // Filter data
         if (Array.isArray(disasterTypes) && disasterTypes.length > 0) {
             jsonData = jsonData.filter(item => disasterTypes.includes(item.d));
         }
 
-        // 筛选 yearRange
         if (Array.isArray(yearRange) && yearRange.length === 2) {
             const [minYear, maxYear] = yearRange;
             jsonData = jsonData.filter(item => item.t >= minYear && item.t <= maxYear);
         }
 
-        // 筛选 view
         if (view === 'economic') {
             jsonData = jsonData
                 .filter(item => item.e != null && item.e !== 0)
@@ -101,7 +100,7 @@ router.get('/getDisasterDetail', (req, res) => {
             msg: 'Invalid request parameters',
         });
     }
-    const filePath = path.join(process.cwd(), 'server', 'data', 'detail_data.json');
+    const filePath = path.join(process.cwd(), 'server', 'data', 'data4detail.json');
     fs.readFile(filePath, 'utf-8', (err, data) => {
         if (err) {
             return res.status(200).json({

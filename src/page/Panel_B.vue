@@ -90,9 +90,9 @@ import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import CircleLegend from "@/components/CircleLegend.vue";
 import LineLegend from "@/components/LineLegend.vue";
 import { ElMessage } from 'element-plus'
-import { getDisasterData, getDisasterDetail } from "@/api/disaster";
+import { getMapData, getDisasterDetail } from "@/api/disaster";
 
-// 变量
+// Global variables
 const map = ref(null);          // 地图实例
 let circlesGroup = ref(null);   // 圆圈组
 let plateLayer = ref(null);     // 大陆板块图层
@@ -103,7 +103,7 @@ let oldFilter = null;           // 旧过滤器
 const detailVisible = ref(false);   // 详情对话框可见性
 let detailData = ref(null);         // 详情数据
 
-// 图例配置
+// Legend
 const legendConfig = [
     { type: 'Drought', color: '#FBC02D' },
     { type: 'Flood', color: '#1976D2' },
@@ -155,7 +155,7 @@ const keyMap = {
 // 获取数据
 async function getData(filter) {
     try {
-        const res = await getDisasterData({
+        const res = await getMapData({
             view: filter.view,
             disasterTypes: filter.disasterTypes,
             yearRange: filter.yearRange
