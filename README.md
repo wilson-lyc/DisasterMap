@@ -6,6 +6,6 @@ This repository is part of the final project for the UM_CISC7204 course. This pr
 
 ```sh
 npm install
-npm run start
+npm run dev
 ```
 After running the above command, access [http://localhost:3000](http://localhost:3000) in your browser.
