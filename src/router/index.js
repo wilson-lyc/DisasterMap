@@ -18,6 +18,31 @@ const router = createRouter({
       component: () => import('@/page/Panel_B.vue')
     },
     {
+      path: '/panel_c',
+      name: 'panel_c',
+      component: () => import('@/page/Panel_C.vue')
+    },
+    {
+      path: '/panel_d',
+      name: 'panel_d',
+      component: () => import('@/page/Panel_D.vue')
+    },
+    {
+      path: '/panel_e',
+      name: 'panel_e',
+      component: () => import('@/page/Panel_E.vue')
+    },
+    {
+      path: '/panel_f',
+      name: 'panel_f',
+      component: () => import('@/page/Panel_F.vue')
+    },
+    {
+      path: '/panel_g',
+      name: 'panel_g',
+      component: () => import('@/page/Panel_G.vue')
+    },
+    {
       path: '/verify',
       name: 'verify',
       component: () => import('@/page/Verify.vue')

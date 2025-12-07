@@ -8,4 +8,4 @@ This repository is part of the final project for the UM_CISC7204 course. This pr
 npm install
 npm run dev
 ```
-After running the above command, access [http://localhost:3000](http://localhost:3000) in your browser.
+After running the above command, access [http://localhost:5173](http://localhost:3000) in your browser.

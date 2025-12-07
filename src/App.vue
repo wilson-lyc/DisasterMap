@@ -1,7 +1,12 @@
 <template>
   <el-menu :default-active="activeMenu" router mode="horizontal">
-    <el-menu-item index="/panel_a">Temporal Map</el-menu-item>
-    <el-menu-item index="/panel_b">Interactive Map</el-menu-item>
+    <el-menu-item index="/panel_a">Panel A - Temporal Map</el-menu-item>
+    <el-menu-item index="/panel_b">Panel B - Interactive Map</el-menu-item>
+    <el-menu-item index="/panel_c">Panel C</el-menu-item>
+    <el-menu-item index="/panel_d">Panel D</el-menu-item>
+    <el-menu-item index="/panel_e">Panel E</el-menu-item>
+    <el-menu-item index="/panel_f">Panel F</el-menu-item>
+    <el-menu-item index="/panel_g">Panel G</el-menu-item>
     <el-menu-item>
       <template #default>
         <a href="https://beian.miit.gov.cn" target="_blank">粤ICP备2023033182号</a>
