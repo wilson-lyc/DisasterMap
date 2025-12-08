@@ -1,17 +1,11 @@
 
 <template>
 	<div class="panel-container">
-		<img class="panel-img" :src="img1" />
-		<img class="panel-img" :src="img2" />
-		<img class="panel-img" :src="img3" />
+		<img class="panel-img" src="https://cos.umlyc.com/Visualization-Final-Report/E_Global%20Disaster%20Impact%20Matrix.png" />
+		<img class="panel-img" src="https://cos.umlyc.com/Visualization-Final-Report/E_Disaster%20Multi-Dimensional%20Comparison%20Radar%20Chart.png" />
+		<img class="panel-img" src="https://cos.umlyc.com/Visualization-Final-Report/E_Disaster%20Event-Level%20Pathways%20Parallel%20Coordinates%20Plot.png" />
 	</div>
 </template>
-
-<script setup>
-import img1 from '/img/E_Global Disaster Impact Matrix.png'
-import img2 from '/img/E_Disaster Multi-Dimensional Comparison Radar Chart.png'
-import img3 from '/img/E_Disaster Event-Level Pathways Parallel Coordinates Plot.png'
-</script>
 
 <style scoped>
 .panel-container {

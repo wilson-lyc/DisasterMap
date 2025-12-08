@@ -1,13 +1,8 @@
 <template>
 	<div class="panel-container">
-		<img class="panel-img" :src="img1"/>
+		<img class="panel-img" src="https://cos.umlyc.com/Visualization-Final-Report/C_Disaster%20Impact%20by%20Type.png"/>
 	</div>
 </template>
-
-<script setup>
-// 你可以根据实际图片路径修改下面的路径
-import img1 from '/img/C_Disaster Impact by Type.png'
-</script>
 
 <style scoped>
 .panel-container {

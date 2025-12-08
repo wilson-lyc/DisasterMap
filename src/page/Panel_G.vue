@@ -1,19 +1,12 @@
 
 <template>
 	<div class="panel-container">
-		<img class="panel-img" :src="img1" />
-		<img class="panel-img" :src="img2" />
-		<img class="panel-img" :src="img3" />
-		<img class="panel-img" :src="img4" />
+		<img class="panel-img" src="https://cos.umlyc.com/Visualization-Final-Report/G_Disaster%20Affected%20Population%20by%20Country%20Class.png" />
+		<img class="panel-img" src="https://cos.umlyc.com/Visualization-Final-Report/G_Disaster%20Economic%20Damage%20by%20Country%20Class.png" />
+		<img class="panel-img" src="https://cos.umlyc.com/Visualization-Final-Report/G_Disaster%20Event%20Count%20Heatmap%20by%20Country%20Class.png" />
+		<img class="panel-img" src="https://cos.umlyc.com/Visualization-Final-Report/G_Disaster%20Affected%20Population%20Event%20Count%20Heatmap%20by%20Country%20Class.png" />
 	</div>
 </template>
-
-<script setup>
-import img1 from '/img/G_Disaster Affected Population by Country Class.png'
-import img2 from '/img/G_Disaster Economic Damage by Country Class.png'
-import img3 from '/img/G_Disaster Event Count Heatmap by Country Class.png'
-import img4 from '/img/G_Disaster Affected Population Event Count Heatmap by Country Class.png'
-</script>
 
 <style scoped>
 .panel-container {

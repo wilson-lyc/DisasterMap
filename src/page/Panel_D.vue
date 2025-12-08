@@ -1,12 +1,8 @@
 <template>
 	<div class="panel-container">
-		<img class="panel-img" :src="img1"/>
+		<img class="panel-img" src="https://cos.umlyc.com/Visualization-Final-Report/D_Disaster%20Month%20Heatmap.png"/>
 	</div>
 </template>
-
-<script setup>
-import img1 from '/img/D_Disaster Month Heatmap.png'
-</script>
 
 <style scoped>
 .panel-container {

@@ -1,15 +1,10 @@
 
 <template>
 	<div class="panel-container">
-		<img class="panel-img" :src="img1" />
-		<img class="panel-img" :src="img2" />
+		<img class="panel-img" src="https://cos.umlyc.com/Visualization-Final-Report/F_Disaster%20Economic%20Damage%20Box%20Plot.png" />
+		<img class="panel-img" src="https://cos.umlyc.com/Visualization-Final-Report/F_Disaster%20Impact%20Box%20Plots.png" />
 	</div>
 </template>
-
-<script setup>
-import img1 from '/img/F_Disaster Economic Damage Box Plot.png'
-import img2 from '/img/F_Disaster Impact Box Plots.png'
-</script>
 
 <style scoped>
 .panel-container {
